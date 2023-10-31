@@ -1,10 +1,22 @@
 <script setup>
-import { ref } from 'vue';
+
+// This starter template is using Vue 3 <script setup> SFCs
+// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
+import { ref, computed } from "vue";
+
+// Propiedad computada
+const characterCount = computed(() => {
+  return newItem.value.length;
+});
+
+// Creando propiedad computada que invierte items de la lista
+const reversedItems = computed(() => [...items.value].reverse());
+
 const header = ref('App Lista de compras');
 const items = ref([
-  {id: 1, label: '10 bolillos', purchased: true, highPriority: false},
+  {id: 1, label: '10 bolillos', purchased: true, highPriority: true},
   {id: 2, label: '1 lata de frijoles', purchased: false, highPriority: true},
-  {id: 3, label: '2 lata de atún', purchased: true, highPriority: true}
+  {id: 3, label: '2 lata de atún', purchased: true, highPriority: false}
 ]);
 // 
 const togglePurchased = (item) =>{
@@ -57,15 +69,19 @@ const doEdit = (edit) => {
     <button :disabled="newItem.length === 0" class="btn btn-primary">
       Salvar Articulo
     </button>
-  </form>
+  <!-- Contador -->
+  <p class="counter">
+    {{ characterCount }} / 200
+  </p>
+	</form>
+  <!-- Lista -->
   <ul>
     <li 
-     v-for="({ id, label, purchased, highPriority }, index) in items" 
-      v-bind:key="id"
-      :class="{strikeout: purchased, priority: highPriority}"
-      @click="togglePurchased(items[index])"
-      >
-      🔹 {{ index }} {{ label }}
+    v-for="({ id, label, purchased, highPriority }, index) in reversedItems"
+  :class="{ strikeout: purchased, priority: highPriority }" 
+	@click="togglePurchased(reversedItems[index])" 
+  v-bind:key="id">
+	  🔹 {{ label }}
     </li>
   </ul>
   <p v-if="items.length === 0"> 📿Lista de compras vacia📿</p>
