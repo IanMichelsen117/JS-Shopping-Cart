@@ -1,94 +1,70 @@
 <script setup>
-
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import { ref, computed } from "vue";
-
-// Propiedad computada
-const characterCount = computed(() => {
-  return newItem.value.length;
-});
-
-// Creando propiedad computada que invierte items de la lista
-const reversedItems = computed(() => [...items.value].reverse());
-
+import { ref } from 'vue';
 const header = ref('App Lista de compras');
 const items = ref([
-  {id: 1, label: '10 bolillos', purchased: true, highPriority: true},
-  {id: 2, label: '1 lata de frijoles', purchased: false, highPriority: true},
-  {id: 3, label: '2 lata de atún', purchased: true, highPriority: false}
+ {id: 1, label: '10 bolillos', purchased: true, highPriority: false},
+ {id: 2, label: '1 lata de frijoles', purchased: false, highPriority: true},
+ {id: 3, label: '2 lata de atún', purchased: true, highPriority: true}
 ]);
-// 
-const togglePurchased = (item) =>{
-  //Invertir la propiedad "purchased"
-  item.purchased = !item.purchased;
-}
-// agreganos metodo para guardar nuevo articulo en la lista 
-const saveitem = () => {
-  items.value.push({id: items.value.length + 1, label: newItem.value})
-  // limpiando el contenido de newiten
-  newItem.value="";
-}
-
-// Enlazado con la caja de texto
-const newItem = ref(''); 
+//Para guardar nuevo articulo
+const saveItem = () => {
+ // codigo para verificar si newItem no está vacío antes de agregarlo a la lista
+ if (newItem.value.trim() !== '') {
+ items.value.push({ id: items.value.length + 1, label: newItem.value
+});
+ // Borrar o limpiar la caja de texto de newItem
+ newItem.value = '';
+ }
+};
+const newItem = ref('');
 const newItemHighPriority = ref(false);
-const editing = ref(false);
-const doEdit = (edit) => {
-  // Alterar la variable "editing"
-  editing.value = edit;
-  // Limpiar el input de texto
-  newItem.value = "";
-}
+const habilitarFormulario =ref (false);
+//Creo la nueva variable
+const DoEdit=(edit)=>{
+ //Le coloco la accion de que sea igual a un valor
+ habilitarFormulario.value=edit;
+ //Le coloco la accion de borrar la caja de texto
+ newItem.value="";
+};
 </script>
-
 <template>
-  <div class="header">
-    <h1>{{ header }}</h1>
-    <button v-if="!editing" @click="doEdit(true)" class="btn btn-primary">
-      Ageragar Articulo
-    </button>
-    <button v-else @click="doEdit(false)" class="btn">
-      Cancelar
-    </button>
-  </div>
-  <!-- <a v-bind:href="newItem">
-    <i class="material-icons shoppind-cart-icon">link</i>
-  </a> -->
-  <form v-if="editing" v-on:submit.prevent="saveitem" class="add-item form">
-    <!-- Input de Nuevo Articulo -->
-    <input v-model.trim="newItem" type="text" placeholder="Ingresar nuevo articulo">
-    <!-- Check Boxes -->
-    <label>
-      <input v-model="newItemHighPriority" 
-      type="checkbox">
-      Alta Prioridad
-    </label>
-    {{ newItemHighPriority ? "🔥" : "🧊" }}
-    <!-- Boton de UI -->
-    <button :disabled="newItem.length === 0" class="btn btn-primary">
-      Salvar Articulo
-    </button>
-  <!-- Contador -->
-  <p class="counter">
-    {{ characterCount }} / 200
-  </p>
-	</form>
-  <!-- Lista -->
-  <ul>
-    <li 
-    v-for="({ id, label, purchased, highPriority }, index) in reversedItems"
-  :class="{ strikeout: purchased, priority: highPriority }" 
-	@click="togglePurchased(reversedItems[index])" 
-  v-bind:key="id">
-	  🔹 {{ label }}
-    </li>
-  </ul>
-  <p v-if="items.length === 0"> 📿Lista de compras vacia📿</p>
-  <p v-else>🔥Ingrese mas items 🔥</p>
+ <div class="header">
+ <h1> <i class="material-icons shopping-cart-icon">local_mall</i> {{
+header }}</h1>
+ <button v-if ="!habilitarFormulario" @click= "DoEdit(true)" class="btn
+btn-primary">Agregar articulo</button>
+ <button v-else @click= "DoEdit(false)" class="btn">Cancelar</button>
+ </div>
+ <!-- Esto se usa para crear un ipervinculo con una imagen dependiendo
+de lo que escribas en la
+ caja de texto
+ <a :href="newItem">
+ <i class="material-icons shopping-cart-icon">school</i>
+</a>-->
+ <form v-if="habilitarFormulario" v-on:submit.prevent="saveItem"
+class="add-item form">
+ <!-- Input de Nuevo Articulo -->
+ <input v-model.trim="newItem" type="text" placeholder="Ingresar
+nuevo articulo">
+ <!-- Check Boxes -->
+ <label>
+ <input v-model="newItemHighPriority"
+ type="checkbox">
+ Alta Prioridad
+ </label>
+ {{ newItemHighPriority ? "🔥" : "🧊" }}
+ <!-- Boton de UI -->
+ <button class="btn btn-primary">Salvar Articulo</button>
+ </form>
+ <ul>
+ <li v-for="{ id, label } in items" v-bind:key="id" >
+  🔹{{ label }}
+ </li>
+ </ul>
+ <p v-if="items.length==0">🥀Lista de compras vacia🥀</p>
 </template>
 <style scoped>
 .shopping-cart-icon {
-  font-size: 2rem; /* Adjust the font-size value as per your desired size */
+ font-size: 2rem;
 }
 </style>
